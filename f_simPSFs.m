@@ -3,7 +3,7 @@
 
 function PSFs = f_simPSFs(pram)
 
-  cd('_submodules/optical_PSF/');
+  of = cd('_submodules/optical_PSF/');
   APSF_3D     = Efficient_PSF(pram.NA, pram.nm, pram.lambda_ex, pram.dx,pram.Nx-2,pram.Nx-2,2,200);
   PSF_3D      = abs(APSF_3D{1}).^2+abs(APSF_3D{2}).^2+abs(APSF_3D{3}).^2;
   exPSF       = PSF_3D(:,:,2).^2; % 2021-04-13 check with Peter if this dependence is correct. 
