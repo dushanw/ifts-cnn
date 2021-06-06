@@ -20,14 +20,17 @@ function pram = f_pram_init()
   pram.Nc      = 1;
   pram.Nt      = 250;
   pram.Nb      = 1e4;                                     %           number of batches (instances)
-  pram.dx      = 0.2;
   pram.dz      = 1;
-  
-  %% MIC and imaging parameters
-  pram.lambda_ex  = 0.800;                                % [um]      excitation wavelength
-  pram.lambda_em  = 0.590;                                % [um]      emission wavelength {0.606 }
-  pram.NA         = 1;                                    % [AU]      numerical aperture of the objective
+  pram.dx      = 0.2222;                                  % [um]      readme2 says its 100um/690px = 0.1449[um]
+                                                          %           from 6um beads it's 6um/27px = 0.2222 [um]
     
+  %% MIC and imaging parameters
+  pram.lambda_ex  = 0.488;                                % [um]      excitation wavelength
+  pram.lambda_em  = 0.515;                                % [um]      nominal emission wavelength mid(506,511,524)=515
+  pram.NA         = 0.75;                                 % [AU]      numerical aperture of the objective. 
+                                                          %           optica paper says 0.75 (Nikon, 40x, 0.75 NA, CFI Plan Fluor DLL)
+  pram.nm         = 1;                                    % [AU]      refractive index. =1 becasue of air objective    
+  
   %% camera parameters ??
     
   %% run environment parameters  
