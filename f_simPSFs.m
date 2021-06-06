@@ -20,5 +20,5 @@ function PSFs = f_simPSFs(pram)
   PSFs.emPSF  = emPSF;  
   PSFs.pram   = pram;
         
-  save(['./_PSFs' datestr(datetime('now')) '.mat'],'PSFs','-v7.3'); % save sPSF
+  save(['./_PSFs/' datestr(datetime('now')) '.mat'],'PSFs','-v7.3'); % save sPSF
 end
