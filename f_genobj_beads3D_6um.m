@@ -17,9 +17,6 @@ function X0 = f_genobj_beads3D_6um(N_beads,pram)
   radii       = r_range(randi([1:length(r_range)],N_beads,1));
   norm_int    = normrnd(1,0.1,N_beads,1);                           % normalized intensity
   
-  % boost up small bead's intensity by 5x
-  norm_int(radii == r_range(1)) = norm_int(radii == r_range(1))*5;
-  
   X0          = single(zeros(Ny0,Nx0,Nz0));
   
   [X,Y,Z]     = meshgrid(1:Nx0,1:Ny0,1:Nz0);
@@ -31,7 +28,10 @@ function X0 = f_genobj_beads3D_6um(N_beads,pram)
   end
 
   X0          = imresize3(X0,[pram.Ny pram.Nx pram.Nz],'linear');
-  X0          = X0(:,:,round(min(centroids(:,3))*pram.Nz/Nz0)+1:round(max(centroids(:,3))*pram.Nz/Nz0)-1);
+  
+  z_str       = round(min(centroids(:,3))*pram.Nz/Nz0)+1;
+  z_end       = max(z_str,round(max(centroids(:,3))*pram.Nz/Nz0)-1);
+  X0          = X0(:,:,z_str:z_end);
   
   % volshow(X0)
 end
