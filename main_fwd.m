@@ -3,7 +3,10 @@
 clc;clear all
 
 pram      = f_pram_init();
-load('./_data/ifts_data.mat')
+
+of = cd('./_data/')
+Data = f_readData;
+cd(of)
 
 resDir    = sprintf('./_results/%s/',date);
 mkdir(resDir)
@@ -23,7 +26,7 @@ load('./_PSFs/PSFs_06-Jun-2021 17:21:16.mat')
 
 % dim-order : [x y k opd species batch]
 pram.useGPU         = 0;
-pram.N_opd          = 64;
+pram.N_opd          = 256;
 pram.N_mb           = 1;                      % #instances in a mini batch
 
 pram.fringeContrast = 0.5;
@@ -37,6 +40,11 @@ pram.N_spci         = 4;                      % every image has N_spci species s
 %% no-undersampling
 pram.N_opd          = pram.N_opd0;
 opd_keys            = 1:pram.N_opd0;
+
+%% take-mid-opd-range
+opd_keys            = round(pram.N_opd0/2)-pram.N_opd/2+1:round(pram.N_opd0/2)+pram.N_opd/2;
+
+
 
 %% undersampling
 % opd_keys          = [1 sort(randi([-min(opd_key_tilt(:))+1 pram.N_opd0-max([0; opd_key_tilt(:)])],...
