@@ -4,9 +4,10 @@ clc;clear all
 
 pram      = f_pram_init();
 
-of = cd('./_data/')
-Data = f_readData;
-cd(of)
+% of = cd('./_data/')
+% Data = f_readData;
+% cd(of)
+load('./_data/ifts_data_pp.mat')
 
 resDir    = sprintf('./_results/%s/',date);
 mkdir(resDir)

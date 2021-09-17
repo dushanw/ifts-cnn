@@ -59,6 +59,7 @@ function Data = f_readData()
   Data.specBank                 = specBank;
   Data.specBank_calbed          = specBank_calbed;
     
+  save('ifts_data_pp.mat','Data')
 end
 
 function I        = subf_readInterfData(path,i_end)
