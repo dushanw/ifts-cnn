@@ -12,8 +12,13 @@ load('./_data/ifts_data_pp.mat')
 resDir    = sprintf('./_results/%s/',date);
 mkdir(resDir)
 
-I_exp             = Data.Y_beads1A(120:120+50-1,360:360+50-1,:);
-opd_key_tilt      = Data.opd_tilt(120:120+50-1,360:360+50-1);
+% I_exp             = Data.Y_beads1A(120:120+50-1,360:360+50-1,:);
+% opd_key_tilt      = Data.opd_tilt(120:120+50-1,360:360+50-1);
+
+I_exp             = Data.Y_beads1A(64:64+128-1,320:320+128-1,:);
+opd_key_tilt      = Data.opd_tilt(120:120+50-1,320:320+128-1);
+
+
 % I_exp               = Data.Y_beads1A;
 % opd_key_tilt        = Data.opd_tilt;
 opd_tilt            = mean(diff(Data.opd))*opd_key_tilt;
@@ -39,13 +44,11 @@ pram.N_spci         = 4;                      % every image has N_spci species s
 
 
 %% no-undersampling
-pram.N_opd          = pram.N_opd0;
-opd_keys            = 1:pram.N_opd0;
+% pram.N_opd          = pram.N_opd0;
+% opd_keys            = 1:pram.N_opd0;
 
 %% take-mid-opd-range
 opd_keys            = round(pram.N_opd0/2)-pram.N_opd/2+1:round(pram.N_opd0/2)+pram.N_opd/2;
-
-
 
 %% undersampling
 % opd_keys          = [1 sort(randi([-min(opd_key_tilt(:))+1 pram.N_opd0-max([0; opd_key_tilt(:)])],...
@@ -78,6 +81,8 @@ X0        = reshape(X0,[pram.Ny pram.Nx 1 1 pram.N_spci pram.N_mb]);
 
 S0        = Spectra(:,:,:,:,randi(pram.N_spectra,1,pram.N_spci),:);
 S0        = pram.countsFactor * S0;
+
+opd_tilt  = 0; % to account for the corrected OPD tilt
                               %  1       2        3       4           5           6
                               %  y       x        k       opd         spci        batch   
 [I XS_g1] = f_fwd(X0,...      % [pram.Ny pram.Nx  1       1           pram.N_spci pram.N_mb]
