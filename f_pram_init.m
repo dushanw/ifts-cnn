@@ -25,12 +25,13 @@ function pram = f_pram_init()
   %% ifts parameters                                                        
   pram.N_opd0         = 500;  
   pram.N_opd          = 256;
-  pram.eta_opd        = 50;                               % [nm]      opd noise 
+  pram.compression    = 0.5;
+  pram.eta_opd        = 1;                                % [nm]      opd noise 
   pram.fringeContrast = 0.5;
   
   pram.N_k            = 250;                              %           spectral resolution
   pram.N_spectra      = 21;                               %           #spectral-species in the training set
-  pram.N_spci         = 4;                                %           every image has N_spci species selected at random
+  pram.N_spci         = 1;                                %           every image has N_spci species selected at random
                                                           %             out of N_spectra
                                                           
   %% MIC and imaging parameters
@@ -45,9 +46,16 @@ function pram = f_pram_init()
   %% camera parameters ??
     
   %% training parameters
-  pram.N_mb           = 5;                                %           #instances in a mini batch
-  pram.Nb             = 1e4;                              %           number of batches (instances)
-  
+  pram.N_mb               = 8;                            %           #instances in a mini batch
+  pram.Nb                 = 128;                          %           number of batches (instances)
+  pram.maxEpochs          = 10;
+  pram.miniBatchSize      = pram.N_mb;
+  pram.initLearningRate   = 1;
+  pram.learningRateFactor = .1;
+  pram.dropPeriod         = round(pram.maxEpochs/4);
+  pram.l2reg              = 0.0001;
+  pram.excEnv             = 'auto';                       % {'auto','gpu','multi-gpu'}
+
   %% run environment parameters  
   pram.useGPU   = gpuDeviceCount>1 ;
   
