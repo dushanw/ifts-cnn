@@ -12,12 +12,14 @@ pram.useGPU = 0;                              % some function on the fwd model d
 [Data Data0 pram] = f_gen_allData_beads(pram);
 pram.useGPU = gpuDeviceCount>1 ;
 
-inds_spec_vis = find(Data0.specBank_calbed.lambda>300 & Data0.specBank_calbed.lambda<800);
+inds_spec_vis = find(pram.lambda>300 & pram.lambda<800);
 Data_x      = Data;
 Data.Str    = Data.Str (:,:,inds_spec_vis,:,:,:);
 Data.Sval   = Data.Sval(:,:,inds_spec_vis,:,:,:);
-pram.N_k    = length(inds_spec_vis);
-
+pram.k      = pram.k(inds_spec_vis);
+pram.N_k    = length(pram.k);
+pram.lambda = pram.lambda(inds_spec_vis);
+  
 %% generate inv model
 lgraph      = f_gen_inv(pram);
 

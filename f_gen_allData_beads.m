@@ -10,11 +10,8 @@ function [DataAll Data pram] = f_gen_allData_beads(pram)
   I_exp               = Data.Y_beads1A(64:64+pram.Ny-1,320:320+pram.Nx-1,:);
   opd_key_tilt        = Data.opd_tilt(120:120+50-1,320:320+128-1);
 
-  % set-pram from data read 
-  pram.N_opd0         = length(Data.opd);
+  pram.N_opd0         = length(Data.opd);  
   pram.N_k            = length(Data.specBank_calbed.k);
-  pram.N_spectra      = size(Data.specBank_calbed.em,2);
-
   %% set-data-structures
   opd_keys            = round(pram.N_opd0/2)-pram.N_opd/2+1:round(pram.N_opd0/2)+pram.N_opd/2;  % take-mid-opd-range
                                                 
@@ -82,6 +79,15 @@ function [DataAll Data pram] = f_gen_allData_beads(pram)
   
   DataAll.Itst  = I_exp;                                %temp-for-a-later-look: I_exp_n   = I_exp./I_exp(:,:,:,1,:,:) - 1; 
                                                         
-
+  % set-pram from data read 
+  pram.N_opd0         = length(Data.opd);
+  pram.N_opd          = length(opd);
+  pram.k              = k;
+  pram.lambda         = 2*pi./k;
+  pram.opd            = opd;
+  pram.N_k            = length(k);
+  pram.N_spectra      = size(Data.specBank_calbed.em,2);
+  
+  
 end
 
