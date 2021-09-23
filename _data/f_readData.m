@@ -15,12 +15,12 @@ function Data = f_readData()
   %% calibration
   lambda_lsr      = 488;                        % [nm]  
   [opd k]         = subf_calib1(Data.Y_lsr488nm,lambda_lsr);
-                                                % [nm^-1], k = 1/lambda = wave number
+                                                % [nm^-1], k = 2*pi/lambda = wave number
   % manually compare and recorded based on WLQBF data
   cpi             = [500.6 522.0 549.8 621.1 670.7];
   oos             = [501.5 521.1 547.9 617.5 661.1];
 
-  calib2_Trnsfrm  =fit(1./cpi',1./oos','poly2');
+  calib2_Trnsfrm  = fit(2*pi./cpi',2*pi./oos','poly2');       % k = 2*pi/lambda
   k_calbed        = calib2_Trnsfrm(k);
   opd_tilt        = subf_calib_0opdPos(Data.Y_whiteLED,k);
   
@@ -28,13 +28,13 @@ function Data = f_readData()
   Data.opd_tilt   = opd_tilt;
   
   % correct opd-tilt on all datasets
-  Data.Y_lsr488nm = subf_preProcI(Data.Y_lsr488nm,opd_tilt);
-  Data.Y_whiteLED = subf_preProcI(Data.Y_whiteLED,opd_tilt);
-  Data.Y_redLED   = subf_preProcI(Data.Y_redLED  ,opd_tilt);
-  Data.Y_beads1A  = subf_preProcI(Data.Y_beads1A ,opd_tilt);
+%   Data.Y_lsr488nm = subf_preProcI(Data.Y_lsr488nm,opd_tilt);
+%   Data.Y_whiteLED = subf_preProcI(Data.Y_whiteLED,opd_tilt);
+%   Data.Y_redLED   = subf_preProcI(Data.Y_redLED  ,opd_tilt);
+%   Data.Y_beads1A  = subf_preProcI(Data.Y_beads1A ,opd_tilt);
   
   %% read spectral database
-  specBank.lambda = [1:ceil(max(1./k_calbed))]'; % [nm] full wavelength range
+  specBank.lambda = [1:ceil(max(2*pi./k_calbed))]'; % [nm] full wavelength range
   
   file_listing    = dir('./spectra/Alexa Fluor/');  
   file_listing    = file_listing(3:end);        % remove '.' and '..' in mac
@@ -52,7 +52,7 @@ function Data = f_readData()
   specBank.em(specBank.em(:)<0) = 0;
 
   specBank_calbed.k             = k_calbed;
-  specBank_calbed.lambda        = 1./k_calbed;
+  specBank_calbed.lambda        = 2*pi./k_calbed;
   specBank_calbed.ex            = specBank.ex(round(specBank_calbed.lambda),:);
   specBank_calbed.em            = specBank.em(round(specBank_calbed.lambda),:);
   
@@ -95,18 +95,18 @@ function [I rect] = subf_crop(I,rect)
     close all
 end
 
-function [opd f]  = subf_calib1(I_laser,lambda_laser)
+function [opd k]  = subf_calib1(I_laser,lambda_laser)
 
-  k_laser = 1/lambda_laser;% clarify this point should have 2pi or not?
-  N = size(I_laser,3);
-  S_laser = abs(fft(I_laser,[],3));
-  [temp n] = max(S_laser(:,:,2:N/2),[],3);    
-  dk = k_laser./n;
-  dOpd = 1./(dk*N);
+  k_laser   = 2*pi/lambda_laser;           % clarify this point should have 2pi or not? should have 2*pi. "k = 2*pi/lambda"
+  N         = size(I_laser,3);
+  S_laser   = abs(fft(I_laser,[],3));
+  [temp n]  = max(S_laser(:,:,2:N/2),[],3);    
+  dk        = k_laser./n;
+  dOpd      = 2*pi./(dk*N);
 
-  opd = -dOpd*N/2:dOpd:dOpd*N/2-1;
-  f_max = 1./(mean(dOpd(:))*2);
-  f = linspace(0,f_max,N/2);
+  opd       = -dOpd*N/2:dOpd:dOpd*N/2-1;
+  k_max     = 2*pi./(mean(dOpd(:))*2);     % I think this should be renamed as k (done)
+  k         = linspace(0,k_max,N/2);
   % mean(dOpd(:))
 end
 
@@ -114,7 +114,7 @@ function opd_tilt = subf_calib_0opdPos(I,k)
   I               = subf_smootheImages(I,10);
   S               = fftshift(fft(I,[],3),3);
 
-  lambda          = 1./k;
+  lambda          = 2*pi./k;        % as k = 2*pi/lambda
   k_pb            = zeros(size(S,3),1);
   k_pb_inds       = [length(k_pb)/2+1 - find(lambda>600 & lambda<700) ...
                      length(k_pb)/2+1 + find(lambda>600 & lambda<700)];
