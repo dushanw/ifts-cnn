@@ -1,12 +1,11 @@
-function lgraph = f_gen_inv(pram)
+function lgraph = f_gen_inv_rf(pram)
 
-  size_In     = [pram.Ny pram.Nx pram.N_opd];
+  size_In     = [pram.Ny pram.Nx pram.N_opdCompresed];
 
   net0_dncnn  = denoisingNetwork('dncnn');
   lgraph      = layerGraph(net0_dncnn.Layers);
 
-  lgraph = replaceLayer(lgraph,'InputLayer',imageInputLayer(size_In,'Name','InputLayer','Normalization','none'));        
-  %lgraph = replaceLayer(lgraph,'Conv1',convolution2dLayer([3 3],64,'Name','Conv1','NumChannels',size_In(3),'Padding',[1 1 1 1],'stride',[1  1]));        
+  lgraph = replaceLayer(lgraph,'InputLayer',imageInputLayer(size_In,'Name','InputLayer','Normalization','none'));
   lgraph = replaceLayer(lgraph,'Conv1',convolution2dLayer([3 3],64,'Name','Conv1','NumChannels',pram.N_k,'Padding',[1 1 1 1],'stride',[1  1]));        
   
   lgraph = replaceLayer(lgraph,'Conv16',convolution2dLayer([3 3],pram.N_k,'Name','Conv16','Padding',[1 1 1 1],'stride',[1  1]));
@@ -20,12 +19,11 @@ function lgraph = f_gen_inv(pram)
   lgraph = replaceLayer(lgraph,'BNorm19',batchNormalizationLayer('Name','BNorm19'));
   
   % lgraph = addLayers(lgraph,dropoutLayer(1 - pram.compression,'Name','Drop1'));
-  lgraph = addLayers(lgraph,chDropoutLayer('Drop1',1-pram.compression));
-  lgraph = addLayers(lgraph,cosSinTransformLayer('cosSinTr1',pram.opd,pram.k));
+  % lgraph = addLayers(lgraph,chDropoutLayer('Drop1',1-pram.compression));
+  lgraph = addLayers(lgraph,cosSinTransformLayer('cosSinTr1',pram.opdCompressed,pram.k));
   % lgraph = addLayers(lgraph,fftLayer('fft1',pram.kAll));
   lgraph = disconnectLayers(lgraph,'InputLayer','Conv1');
-  lgraph = connectLayers(lgraph,'InputLayer','Drop1');
-  lgraph = connectLayers(lgraph,'Drop1','cosSinTr1');
+  lgraph = connectLayers(lgraph,'InputLayer','cosSinTr1');  
   lgraph = connectLayers(lgraph,'cosSinTr1','Conv1');
   % lgraph = connectLayers(lgraph,'Drop1','fft1');
   % lgraph = connectLayers(lgraph,'fft1','Conv1');
