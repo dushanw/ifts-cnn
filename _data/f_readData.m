@@ -116,8 +116,11 @@ function opd_tilt = subf_calib_0opdPos(I,k)
 
   lambda          = 2*pi./k;        % as k = 2*pi/lambda
   k_pb            = zeros(size(S,3),1);
-  k_pb_inds       = [length(k_pb)/2+1 - find(lambda>600 & lambda<700) ...
-                     length(k_pb)/2+1 + find(lambda>600 & lambda<700)];
+%   k_pb_inds       = [length(k_pb)/2+1 - find(lambda>600 & lambda<700) ...
+%                      length(k_pb)/2+1 + find(lambda>600 & lambda<700)];
+  k_pb_inds       = [length(k_pb)/2+1 - find(lambda>500 & lambda<800) ...
+                     length(k_pb)/2+1 + find(lambda>500 & lambda<800)];
+
   k_pb(k_pb_inds) = 1;
 
   S(:,:,k_pb==0)  = 0;
